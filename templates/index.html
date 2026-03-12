@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4 mb-4" style="color: var(--primary);">
+        <i class="bi bi-flag-fill"></i> 澳門童軍第5旅
+    </h1>
+    <h2 class="mb-4">點名系統</h2>
+    
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body py-5">
+                    <p class="lead">請選擇操作：</p>
+                    <div class="d-grid gap-3 col-md-6 mx-auto">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> 登入系統
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-5 text-muted">
+        <small>澳門童軍第5旅 點名系統 &copy; 2024</small>
+    </div>
+</div>
+{% endblock %}
