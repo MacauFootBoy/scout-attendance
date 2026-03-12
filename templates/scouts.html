@@ -36,13 +36,32 @@
                             <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ scout.id }}">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <form method="POST" action="{{ url_for('delete_scout', id=scout.id) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('確定要移除此童軍嗎？')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ scout.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </td>
                     </tr>
+                    
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal{{ scout.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">確認刪除</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>確定要移除 <strong>{{ scout.name }}</strong> 嗎？</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <form method="POST" action="{{ url_for('delete_scout', id=scout.id) }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-danger">確認刪除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Edit Modal -->
                     <div class="modal fade" id="editModal{{ scout.id }}" tabindex="-1">
