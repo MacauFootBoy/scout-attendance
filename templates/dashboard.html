@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="bi bi-speedometer2"></i> 控制台</h2>
+    <p class="mb-0">歡迎回來，{{ current_user.name or current_user.username }}！</p>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card stat-card stat-present">
+            <i class="bi bi-people-fill display-4"></i>
+            <h3>{{ total_scouts }}</h3>
+            <p class="mb-0">活躍童軍</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-leave">
+            <i class="bi bi-calendar-check display-4"></i>
+            <h3>{{ recent_meetings|length }}</h3>
+            <p class="mb-0">集會次數</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-uniform">
+            <i class="bi bi-clipboard-data display-4"></i>
+            <h3>{{ recent_meetings[0].date.strftime('%m/%d') if recent_meetings else '--' }}</h3>
+            <p class="mb-0">最近集會</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card stat-absent">
+            <i class="bi bi-gear display-4"></i>
+            <h3>正常</h3>
+            <p class="mb-0">系統狀態</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lightning"></i> 快速操作
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('attendance') }}" class="btn btn-primary">
+                        <i class="bi bi-clipboard-check"></i> 開始點名
+                    </a>
+                    <a href="{{ url_for('scouts') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-person-plus"></i> 添加童軍
+                    </a>
+                    <a href="{{ url_for('stats') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-bar-chart"></i> 查看統計
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-clock-history"></i> 最近集會
+            </div>
+            <div class="card-body">
+                {% if recent_meetings %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>主題</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for meeting in recent_meetings %}
+                            <tr>
+                                <td>{{ meeting.date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ meeting.theme or '集會' }}</td>
+                                <td>
+                                    <a href="{{ url_for('attendance_detail', date=meeting.date) }}" class="btn btn-sm btn-outline-primary">
+                                        詳情
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">暫無集會記錄</p>
+                {% endif %}
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('attendance_history') }}" class="btn btn-sm btn-link">查看全部記錄</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if today_meeting %}
+<div class="alert alert-info mt-4">
+    <i class="bi bi-info-circle"></i> 
+    <strong>今日有集會！</strong> 日期：{{ today_meeting.date }}，主題：{{ today_meeting.theme or '未設定' }}
+    <a href="{{ url_for('attendance') }}?date={{ today_meeting.date }}" class="btn btn-sm btn-primary ms-2">前往點名</a>
+</div>
+{% else %}
+<div class="alert alert-warning mt-4">
+    <i class="bi bi-calendar"></i> 
+    今日沒有集會記錄
+    <a href="{{ url_for('attendance') }}" class="btn btn-sm btn-warning ms-2">創建集會</a>
+</div>
+{% endif %}
+{% endblock %}
