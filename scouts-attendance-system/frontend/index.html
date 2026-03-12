@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澳門童軍第5旅 - 出席管理系統</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 登入頁面 -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo-placeholder">
+                    <i class="fas fa-campground"></i>
+                    <h1>澳門童軍第5旅</h1>
+                </div>
+                <h2>出席管理系統</h2>
+                <p>請登入以管理童軍出席記錄</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> 用戶名</label>
+                    <input type="text" id="username" placeholder="輸入用戶名" required>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> 密碼</label>
+                    <input type="password" id="password" placeholder="輸入密碼" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> 登入系統
+                </button>
+                <div class="login-footer">
+                    <p>默認帳戶: <strong>admin</strong> / <strong>admin123</strong></p>
+                    <p class="warning">首次登入後請立即更改密碼！</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 主應用頁面 -->
+    <div id="appPage" class="page hidden">
+        <!-- 頂部導航欄 -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-campground"></i>
+                <h1>澳門童軍第5旅 <span class="nav-subtitle">出席管理系統</span></h1>
+            </div>
+            <div class="nav-user">
+                <span id="currentUser">管理員</span>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> 登出
+                </button>
+            </div>
+        </nav>
+
+        <!-- 側邊欄 -->
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i> 儀表板
+                </a>
+                <a href="#" class="menu-item" data-page="members">
+                    <i class="fas fa-users"></i> 童軍成員
+                </a>
+                <a href="#" class="menu-item" data-page="meetings">
+                    <i class="fas fa-calendar-alt"></i> 集會管理
+                </a>
+                <a href="#" class="menu-item" data-page="attendance">
+                    <i class="fas fa-clipboard-check"></i> 出席記錄
+                </a>
+                <a href="#" class="menu-item" data-page="stats">
+                    <i class="fas fa-chart-bar"></i> 統計分析
+                </a>
+                <a href="#" class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i> 系統設置
+                </a>
+            </div>
+            <div class="sidebar-footer">
+                <p>版本 1.0.0</p>
+                <p>© 2026 澳門童軍第5旅</p>
+            </div>
+        </div>
+
+        <!-- 主內容區域 -->
+        <main class="main-content">
+            <div id="contentArea">
+                <!-- 各頁面內容會動態加載到此 -->
+                <div class="welcome-message">
+                    <h2>歡迎使用澳門童軍第5旅出席管理系統</h2>
+                    <p>請從左側選單選擇功能</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模板（用於動態生成內容） -->
+    <template id="dashboardTemplate">
+        <div class="dashboard-page">
+            <h2><i class="fas fa-home"></i> 系統儀表板</h2>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #3B82F6;">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalMembers">0</h3>
+                        <p>童軍成員</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #10B981;">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeMembers">0</h3>
+                        <p>活躍成員</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #8B5CF6;">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalMeetings">0</h3>
+                        <p>集會記錄</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #F59E0B;">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="attendanceRate">0%</h3>
+                        <p>平均出席率</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-charts">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> 出席狀態分佈</h3>
+                    <div class="chart-container">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line"></i> 近期集會出席趨勢</h3>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3><i class="fas fa-history"></i> 最近集會</h3>
+                <div id="recentMeetings">
+                    <p>載入中...</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="membersTemplate">
+        <div class="members-page">
+            <div class="page-header">
+                <h2><i class="fas fa-users"></i> 童軍成員管理</h2>
+                <button id="addMemberBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> 添加成員
+                </button>
+            </div>
+            <div class="page-actions">
+                <div class="search-box">
+                    <input type="text" id="memberSearch" placeholder="搜索成員姓名或編號...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="filter-options">
+                    <select id="patrolFilter">
+                        <option value="">所有小隊</option>
+                        <option value="狼">狼</option>
+                        <option value="鷹">鷹</option>
+                        <option value="豹">豹</option>
+                        <option value="獅">獅</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table id="membersTable">
+                    <thead>
+                        <tr>
+                            <th>成員編號</th>
+                            <th>中文姓名</th>
+                            <th>英文姓名</th>
+                            <th>小隊</th>
+                            <th>階級</th>
+                            <th>加入日期</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTableBody">
+                        <!-- 成員數據會動態加載 -->
+                        <tr>
+                            <td colspan="8">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="meetingsTemplate">
+        <div class="meetings-page">
+            <div class="page-header">
+                <h2><i class="fas fa-calendar-alt"></i> 集會管理</h2>
+                <button id="addMeetingBtn" class="btn-primary">
+                    <i class="fas fa-plus"></i> 新增集會
+                </button>
+            </div>
+            <div class="table-container">
+                <table id="meetingsTable">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>集會主題</th>
+                            <th>地點</th>
+                            <th>備註</th>
+                            <th>出席記錄</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="meetingsTableBody">
+                        <!-- 集會數據會動態加載 -->
+                        <tr>
+                            <td colspan="6">載入中...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="attendanceTemplate">
+        <div class="attendance-page">
+            <div class="page-header">
+                <h2><i class="fas fa-clipboard-check"></i> 出席記錄</h2>
+                <div class="header-controls">
+                    <select id="meetingSelect">
+                        <option value="">選擇集會...</option>
+                    </select>
+                    <button id="saveAttendanceBtn" class="btn-primary" disabled>
+                        <i class="fas fa-save"></i> 保存記錄
+                    </button>
+                </div>
+            </div>
+            
+            <div id="attendanceControls" class="hidden">
+                <div class="attendance-instructions">
+                    <h3>記錄出席狀態</h3>
+                    <p>請為每位成員選擇出席狀態：</p>
+                    <div class="status-legends">
+                        <div class="legend-item">
+                            <span class="status-badge present"></span> 出席
+                        </div>
+                        <div class="legend-item">
+                            <span class="status-badge absent"></span> 缺席
+                        </div>
+                        <div class="legend-item">
+                            <span class="status-badge leave"></span> 請假
+                        </div>
+                        <div class="legend-item">
+                            <span class="status-badge uniform_issue"></span> 制服不整
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="attendance-table-container">
+                    <table id="attendanceTable">
+                        <thead>
+                            <tr>
+                                <th>成員姓名</th>
+                                <th>小隊</th>
+                                <th>出席狀態</th>
+                                <th>備註</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- 出席記錄會動態加載 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="noMeetingSelected" class="empty-state">
+                <i class="fas fa-calendar-times"></i>
+                <h3>請選擇一個集會以記錄出席</h3>
+                <p>從上方下拉選單選擇集會日期</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="statsTemplate">
+        <div class="stats-page">
+            <h2><i class="fas fa-chart-bar"></i> 統計分析</h2>
+            <div class="stats-controls">
+                <div class="date-range">
+                    <label>時間範圍：</label>
+                    <select id="statsRange">
+                        <option value="all">全部時間</option>
+                        <option value="month">最近一個月</option>
+                        <option value="quarter">最近三個月</option>
+                        <option value="year">最近一年</option>
+                    </select>
+                </div>
+                <div class="patrol-filter">
+                    <label>小隊篩選：</label>
+                    <select id="statsPatrol">
+                        <option value="all">所有小隊</option>
+                        <option value="狼">狼</option>
+                        <option value="鷹">鷹</option>
+                        <option value="豹">豹</option>
+                        <option value="獅">獅</option>
+                    </select>
+                </div>
+                <button id="refreshStats" class="btn-secondary">
+                    <i class="fas fa-sync-alt"></i> 更新統計
+                </button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-large-card">
+                    <h3><i class="fas fa-chart-pie"></i> 出席率分佈</h3>
+                    <div class="chart-container-large">
+                        <canvas id="statsPieChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-large-card">
+                    <h3><i class="fas fa-chart-line"></i> 出席趨勢</h3>
+                    <div class="chart-container-large">
+                        <canvas id="statsLineChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-large-card full-width">
+                    <h3><i class="fas fa-table"></i> 小隊比較</h3>
+                    <div class="chart-container-large">
+                        <canvas id="statsBarChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stat-large-card">
+                    <h3><i class="fas fa-star"></i> 最佳出席成員</h3>
+                    <div id="topMembersList">
+                        <p>載入中...</p>
+                    </div>
+                </div>
+                
+                <div class="stat-large-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> 需要注意的成員</h3>
+                    <div id="lowAttendanceList">
+                        <p>載入中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="settingsTemplate">
+        <div class="settings-page">
+            <h2><i class="fas fa-cog"></i> 系統設置</h2>
+            <div class="settings-cards">
+                <div class="settings-card">
+                    <h3><i class="fas fa-user-shield"></i> 帳戶安全</h3>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label>當前密碼</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>新密碼</label>
+                            <input type="password" id="newPassword" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>確認新密碼</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-key"></i> 更改密碼
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="settings-card">
+                    <h3><i class="fas fa-database"></i> 數據管理</h3>
+                    <div class="settings-actions">
+                        <button id="exportDataBtn" class="btn-secondary">
+                            <i class="fas fa-file-export"></i> 導出數據
+                        </button>
+                        <button id="importDataBtn" class="btn-secondary">
+                            <i class="fas fa-file-import"></i> 導入數據
+                        </button>
+                        <button id="backupBtn" class="btn-secondary">
+                            <i class="fas fa-save"></i> 備份數據庫
+                        </button>
+                    </div>
+                    <div class="settings-info">
+                        <p><strong>數據庫路徑：</strong> scouts_attendance.db</p>
+                        <p><strong>數據表：</strong> 4 個</p>
+                    </div>
+                </div>
+                
+                <div class="settings-card">
+                    <h3><i class="fas fa-info-circle"></i> 系統信息</h3>
+                    <div class="system-info">
+                        <p><strong>版本：</strong> 1.0.0</p>
+                        <p><strong>後端API：</strong> <span id="apiStatus">連接正常</span></p>
+                        <p><strong>最後更新：</strong> 2026-03-11</p>
+                        <p><strong>開發者：</strong> 澳門童軍第5旅技術組</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 模態對話框模板 -->
+    <template id="memberModalTemplate">
+        <div class="modal-content">
+            <h3 id="memberModalTitle">添加成員</h3>
+            <form id="memberForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>成員編號 *</label>
+                        <input type="text" id="modalMemberNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label>中文姓名 *</label>
+                        <input type="text" id="modalChineseName" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>英文姓名</label>
+                        <input type="text" id="modalEnglishName">
+                    </div>
+                    <div class="form-group">
+                        <label>小隊</label>
+                        <select id="modalPatrol">
+                            <option value="">選擇小隊</option>
+                            <option value="狼">狼</option>
+                            <option value="鷹">鷹</option>
+                            <option value="豹">豹</option>
+                            <option value="獅">獅</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>階級</label>
+                        <input type="text" id="modalRank" placeholder="如：童軍、深資童軍">
+                    </div>
+                    <div class="form-group">
+                        <label>加入日期</label>
+                        <input type="date" id="modalJoinDate">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>狀態</label>
+                    <select id="modalStatus">
+                        <option value="active">活躍</option>
+                        <option value="inactive">非活躍</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </template>
+
+    <!-- 其他模態對話框會動態創建 -->
+
+    <script src="app.js"></script>
+</body>
+</html>
