@@ -7,7 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'scout-secret-key-2024')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///scout.db')
+# Supabase PostgreSQL
+SUPABASE_DB_URL = "postgresql://postgres:zPl8SsaI1kTa3PFU@db.jfedyerqsklhuedscovt.supabase.co:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', SUPABASE_DB_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
