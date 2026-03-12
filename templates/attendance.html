@@ -57,7 +57,7 @@
                                            name="status_{{ scout.id }}" 
                                            id="present_{{ scout.id }}" 
                                            value="present"
-                                           {% if records.get(scout.id) and records[scout.id].status == 'present' %}checked{% endif %}>
+                                           {% if not records.get(scout.id) or records.get(scout.id).status == 'present' %}checked{% endif %}>
                                     <label class="form-check-label text-success" for="present_{{ scout.id }}">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </label>

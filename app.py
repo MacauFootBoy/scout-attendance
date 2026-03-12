@@ -7,8 +7,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'scout-secret-key-2024')
-# SQLite 本地數據庫
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///scout.db')
+# Supabase PostgreSQL
+SUPABASE_DB_URL = "postgresql://postgres:zPl8SsaI1kTa3PFU@db.jfedyerqsklhuedscovt.supabase.co:5432/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', SUPABASE_DB_URL)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -174,8 +175,11 @@ def attendance():
             status = request.form.get(f'status_{scout.id}')
             note = request.form.get(f'note_{scout.id}')
             
-            if status:
-                # 檢查是否已有記錄
+            # 如果沒有選擇狀態，預設為出席
+            if not status:
+                status = 'present'
+            
+            # 檢查是否已有記錄
                 existing = Attendance.query.filter_by(
                     scout_id=scout.id, 
                     date=meeting_date
