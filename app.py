@@ -121,6 +121,21 @@ def add_scout():
     
     return redirect(url_for('scouts'))
 
+@app.route('/scout/bulk-add', methods=['POST'])
+@login_required
+def bulk_add_scout():
+    """批量添加童軍"""
+    scouts_data = request.form.get('scouts_data')  # 格式: 姓名,小隊;姓名,小隊
+    if scouts_data:
+        for line in scouts_data.split(';'):
+            if ',' in line:
+                name, troop = line.split(',', 1)
+                scout = Scout(name=name.strip(), troop=troop.strip())
+                db.session.add(scout)
+        db.session.commit()
+        flash(f'已批量添加童軍', 'success')
+    return redirect(url_for('scouts'))
+
 @app.route('/scout/<int:id>/edit', methods=['POST'])
 @login_required
 def edit_scout(id):
