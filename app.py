@@ -380,6 +380,18 @@ def init_db():
             db.session.commit()
             print('已創建默認管理員: admin / scout2024')
 
+# 啟動時初始化數據庫
+with app.app_context():
+    db.create_all()
+    if not Admin.query.first():
+        admin = Admin(
+            username='admin',
+            password_hash=generate_password_hash('scout2024'),
+            name='系統管理員'
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print('已創建默認管理員: admin / scout2024')
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True, host='0.0.0.0', port=5000)
