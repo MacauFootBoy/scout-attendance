@@ -31,17 +31,17 @@
             <hr>
             
             {% if scouts %}
-            <div class="table-responsive">
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
                             <th style="width: 50px;">編號</th>
                             <th>姓名</th>
                             <th>小隊</th>
-                            <th style="width: 120px;">出席</th>
-                            <th style="width: 120px;">請假</th>
-                            <th style="width: 120px;">缺席</th>
-                            <th style="width: 120px;">制服不整</th>
+                            <th style="width: 80px;">出席</th>
+                            <th style="width: 80px;">請假</th>
+                            <th style="width: 80px;">缺席</th>
+                            <th style="width: 80px;">制服不整</th>
                             <th>備註</th>
                         </tr>
                     </thead>
@@ -58,7 +58,7 @@
                                            id="present_{{ scout.id }}" 
                                            value="present"
                                            {% if not records.get(scout.id) or records.get(scout.id).status == 'present' %}checked{% endif %}>
-                                    <label class="form-check-label text-success" for="present_{{ scout.id }}">
+                                    <label class="form-check-label text-success d-none" for="present_{{ scout.id }}">
                                         <i class="bi bi-check-circle-fill"></i>
                                     </label>
                                 </div>
@@ -70,7 +70,7 @@
                                            id="leave_{{ scout.id }}" 
                                            value="leave"
                                            {% if records.get(scout.id) and records[scout.id].status == 'leave' %}checked{% endif %}>
-                                    <label class="form-check-label text-info" for="leave_{{ scout.id }}">
+                                    <label class="form-check-label text-info d-none" for="leave_{{ scout.id }}">
                                         <i class="bi bi-envelope-fill"></i>
                                     </label>
                                 </div>
@@ -82,7 +82,7 @@
                                            id="absent_{{ scout.id }}" 
                                            value="absent"
                                            {% if records.get(scout.id) and records[scout.id].status == 'absent' %}checked{% endif %}>
-                                    <label class="form-check-label text-danger" for="absent_{{ scout.id }}">
+                                    <label class="form-check-label text-danger d-none" for="absent_{{ scout.id }}">
                                         <i class="bi bi-x-circle-fill"></i>
                                     </label>
                                 </div>
@@ -94,7 +94,7 @@
                                            id="uniform_{{ scout.id }}" 
                                            value="uniform"
                                            {% if records.get(scout.id) and records[scout.id].status == 'uniform' %}checked{% endif %}>
-                                    <label class="form-check-label text-warning" for="uniform_{{ scout.id }}">
+                                    <label class="form-check-label text-warning d-none" for="uniform_{{ scout.id }}">
                                         <i class="bi bi-exclamation-triangle-fill"></i>
                                     </label>
                                 </div>
@@ -107,6 +107,39 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- 手機版卡片式顯示 -->
+            <div class="d-md-none">
+                {% for scout in scouts %}
+                <div class="card mb-2">
+                    <div class="card-body p-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>{{ scout.name }}</strong>
+                            <span class="badge bg-secondary">{{ scout.troop or '-' }}</span>
+                        </div>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="status_{{ scout.id }}" id="p_{{ scout.id }}" value="present" 
+                                   {% if not records.get(scout.id) or records.get(scout.id).status == 'present' %}checked{% endif %}>
+                            <label class="btn btn-sm btn-outline-success" for="p_{{ scout.id }}">出席</label>
+                            
+                            <input type="radio" class="btn-check" name="status_{{ scout.id }}" id="l_{{ scout.id }}" value="leave"
+                                   {% if records.get(scout.id) and records[scout.id].status == 'leave' %}checked{% endif %}>
+                            <label class="btn btn-sm btn-outline-info" for="l_{{ scout.id }}">請假</label>
+                            
+                            <input type="radio" class="btn-check" name="status_{{ scout.id }}" id="a_{{ scout.id }}" value="absent"
+                                   {% if records.get(scout.id) and records[scout.id].status == 'absent' %}checked{% endif %}>
+                            <label class="btn btn-sm btn-outline-danger" for="a_{{ scout.id }}">缺席</label>
+                            
+                            <input type="radio" class="btn-check" name="status_{{ scout.id }}" id="u_{{ scout.id }}" value="uniform"
+                                   {% if records.get(scout.id) and records[scout.id].status == 'uniform' %}checked{% endif %}>
+                            <label class="btn btn-sm btn-outline-warning" for="u_{{ scout.id }}">制服</label>
+                        </div>
+                        <input type="text" name="note_{{ scout.id }}" class="form-control form-control-sm mt-2" 
+                               placeholder="備註" value="{{ records.get(scout.id).note or '' }}">
+                    </div>
+                </div>
+                {% endfor %}
             </div>
             
             <div class="alert alert-info mt-3">

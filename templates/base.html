@@ -79,6 +79,100 @@
             background-color: #2a4a9e;
         }
         
+        /* 手機版側邊欄隱藏，顯示漢堡選單 */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                padding: 10px;
+            }
+            .page-header {
+                padding: 15px;
+            }
+            .stat-card {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* 桌面版側邊欄樣式 */
+        @media (min-width: 769px) {
+            .mobile-nav {
+                display: none;
+            }
+        }
+        
+        /* 手機版導航 */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--primary);
+            z-index: 1000;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        
+        .mobile-nav a i {
+            font-size: 1.2rem;
+            display: block;
+        }
+        
+        /* 表格響應式 */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table {
+            font-size: 0.9rem;
+        }
+        
+        .table th, .table td {
+            padding: 8px 4px;
+            vertical-align: middle;
+        }
+        
+        /* 點名頁面按鈕優化 */
+        .status-radio {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 576px) {
+            .status-radio {
+                width: 28px;
+                height: 28px;
+            }
+            .table {
+                font-size: 0.8rem;
+            }
+            .btn-sm {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
         .btn-warning {
             background-color: var(--secondary);
             border-color: var(--secondary);
@@ -233,6 +327,14 @@
     </div>
 
     {% if current_user.is_authenticated %}
+    <!-- 手機版底部導航 -->
+    <div class="mobile-nav d-md-none">
+        <a href="{{ url_for('dashboard') }}"><i class="bi bi-house"></i> 控制台</a>
+        <a href="{{ url_for('scouts') }}"><i class="bi bi-people"></i> 名冊</a>
+        <a href="{{ url_for('attendance') }}"><i class="bi bi-clipboard-check"></i> 點名</a>
+        <a href="{{ url_for('stats') }}"><i class="bi bi-bar-chart"></i> 統計</a>
+    </div>
+    
     <footer class="footer">
         <div class="container">
             <p class="mb-0">澳門童軍第5旅 點名系統 &copy; 2024</p>
